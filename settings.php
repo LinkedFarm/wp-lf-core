@@ -5,6 +5,7 @@ namespace LinkedFarm\Core\Settings;
     function init()
     {
         add_action('admin_menu', 'LinkedFarm\Core\Settings\lf_main_menu');
+        add_action('admin_menu', 'LinkedFarm\Core\Settings\lf_main_settings');
     }
 
     function lf_main_menu() {
@@ -17,6 +18,45 @@ namespace LinkedFarm\Core\Settings;
             'LinkedFarm\Core\Settings\lf_core_page_html'
         );
     }
+
+    function lf_main_settings() {
+            add_settings_section(
+                'lf_core_main_section',
+                __('LinkedFarm Main Setings', 'linkedfarm'),
+                'LinkedFarm\Core\Settings\main_section_cb',
+                'lf_core_main_page'
+            );
+
+
+            //todo number of delivery options
+            add_settings_field(
+                'lf_ofd_api',
+                __('OFD API:', 'linkedfarm'),
+                'LinkedFarm\Core\Settings\ofd_api_cb',
+                'lf_core_main_page',
+                'lf_core_main_section',
+                array(__('OFD sync API.', 'linkedfarm'))
+            );
+
+
+            register_setting(
+                'lf_core_main_section',
+                'lf_ofd_api'
+            );
+    }
+    function main_section_cb()
+    {
+        // echo "<p>Main Settings</p>";
+    }
+    function ofd_api_cb($args)
+    {
+        echo '<input type="text"
+    name="lf_ofd_api"
+    id="lf_ofd_api"
+    value="' . get_option('lf_ofd_api') . '"/>';
+        echo '<label for="lf_ofd_api"> ' . $args[0] . '</label>';
+    }
+
 
     function lf_core_page_html() {
         // check user capabilities
@@ -41,12 +81,12 @@ namespace LinkedFarm\Core\Settings;
             <form action="options.php" method="post">
                 <?php
                 // output security fields for the registered setting "ofd_general"
-                settings_fields( 'lf_core' );
+                settings_fields( 'lf_core_main_section' );
                 // output setting sections and their fields
                 // (sections are registered for "ofd_general", each field is registered to a specific section)
-                do_settings_sections( 'lf_core' );
+                do_settings_sections( 'lf_core_main_page' );
                 // output save settings button
-                submit_button( 'Save Settings' );
+                submit_button( __('Save Settings', 'linkedfarm') );
                 ?>
             </form>
         </div>
